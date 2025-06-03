@@ -11,12 +11,26 @@ export default function Home() {
   const [email, setEmail] = useState("")
   const [isSubmitted, setIsSubmitted] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (email) {
-      setIsSubmitted(true)
-      setEmail("")
-      // Submit logic here
+      try {
+        const response = await fetch("/api/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        })
+
+        if (!response.ok) {
+          throw new Error('Failed to submit email')
+        }
+
+        setIsSubmitted(true)
+        setEmail("")
+      } catch (error) {
+        console.error('Error submitting email:', error)
+        // You might want to show an error message to the user here
+      }
     }
   }
 
